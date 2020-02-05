@@ -67,12 +67,23 @@ myStats
 
 
 
-lower_ci <- function(mean, se, n, conf_level = 0.95){
-  lower_ci <- mean - qt(1 - ((1 - conf_level) / 2), n - 1) * se
+lower_ci <- function(mean, sd, n, conf_level = 0.95){
+  #lower_ci <- mean - qt(1 - ((1 - conf_level) / 2), n - 1) * se
+  error <- qnorm(0.975)*sd/sqrt(n)
+  lower_ci<-mean - error
+  
 }
-upper_ci <- function(mean, se, n, conf_level = 0.95){
-  upper_ci <- mean + qt(1 - ((1 - conf_level) / 2), n - 1) * se
+upper_ci <- function(mean, sd, n, conf_level = 0.95){
+ 
+  error <- qnorm(0.975)*sd/sqrt(n)
+  upper_ci<-mean+error
+  # upper_ci <- mean + qt(1 - ((1 - conf_level) / 2), n - 1) * se
 }
+
+
+
+
+
 
 
 #### NOTE!! If using the Rmisc library, may need to specify the dplyr library when calling summarise
@@ -80,8 +91,8 @@ upper_ci <- function(mean, se, n, conf_level = 0.95){
 
 
 fullData<-group_by(.data=data, time) %>% dplyr::summarize(avg=mean(length), stdDev=sd(length), n=n(), stdEr=sd(length)/sqrt(n())) %>% mutate(se = stdDev / sqrt(n),
-         lower_ci = lower_ci(avg, se, n),
-         upper_ci = upper_ci(avg, se, n))
+         lower_ci = lower_ci(avg, stdDev, n),
+         upper_ci = upper_ci(avg, stdDev, n))
 
 
 
@@ -115,22 +126,6 @@ ggplot(data=fullData, mapping=aes(x=time, y=avg))+ geom_path(mapping=aes(x=time,
 
 
 
-```{r}
-
-
-# create a data frame
-variety=rep(LETTERS[1:7], each=40)
-treatment=rep(c("high","low"),each=20)
-note=seq(1:280)+sample(1:150, 280, replace=T)
-data=data.frame(variety, treatment ,  note)
- 
-
-data
-# grouped boxplot
-ggplot(data, aes(x=variety, y=note, fill=treatment)) + 
-    geom_boxplot()
-
-```
 
 
 
@@ -154,7 +149,7 @@ myStats<-summarySE(data=twentyFive, measurevar="length", conf.interval = 0.95)
 myStats%>% mutate(lowerci=length-ci, upperci=length+ci) 
 
 
-
+qnorm(0.975)
 
 
 ```

@@ -36,15 +36,14 @@ Once you have checked that your spreadsheet follows these basic rules, save it a
 
 First you must upload your .csv file to R Studio in the bottom right window using the Upload button.  Browse to locate your file and click Upload.  Make sure it's loaded into the bio110-week3 folder.
 
-Before writing any R code, we'll need to load some R packages in order to use some of the specific functions we want. Run the code chunk below to make sure these functions are available to your environement:
+Before writing any R code, we'll need to load some R packages in order to use some of the specific functions we want.  Run the code chunk below to make sure these functions are available to your environement:
 
 ```{r}
 
-library(readr)
-library(dplyr)
-library(Rmisc)
-library(ggplot2)
-library(rcompanion)
+# the "tidyverse" loads multiple packages that we need, like ggplot, dplyr, and readr
+
+library(tidyverse)
+
 
 
 ```
@@ -54,13 +53,71 @@ Now you'll want to load your data as a data frame into R by assigning it to a va
 
 
 
+/********TESTING!!***************/
+
 ```{r}
-# for example:
-# myData<-read_csv("myData.csv")
+
+data<-read_csv("chlamydataforR.csv")
+
+
+myStats<-data %>% group_by(time) %>% summarise (avg=mean(length), sd=sd(length))
+
+myStats
 
 
 
-# confirm by printing your variable
+lower_ci <- function(mean, se, n, conf_level = 0.95){
+  lower_ci <- mean - qt(1 - ((1 - conf_level) / 2), n - 1) * se
+}
+upper_ci <- function(mean, se, n, conf_level = 0.95){
+  upper_ci <- mean + qt(1 - ((1 - conf_level) / 2), n - 1) * se
+}
+
+
+#### NOTE!! If using the Rmisc library, may need to specify the dplyr library when calling summarise
+## e.g. dplyr::summarise(....)
+
+
+group_by(.data=data, time) %>% dplyr::summarize(avg=mean(length), stdDev=sd(length), n=n(), stdEr=sd(length)/sqrt(n())) %>% mutate(se = stdDev / sqrt(n),
+         lower_ci = lower_ci(avg, se, n),
+         upper_ci = upper_ci(avg, se, n))
+
+
+
+
+
+
+
+
+
+
+
+```
+
+
+
+
+
+
+Testing with summarySE to make sure the values match
+
+
+
+```{r}
+
+
+library(Rmisc)
+
+
+
+twentyFive<-read_csv("25.csv")
+
+
+myStats<-summarySE(data=twentyFive, measurevar="length", conf.interval = 0.95)
+
+myStats%>% mutate(lowerci=length-ci, upperci=length+ci) 
+
+
 
 
 

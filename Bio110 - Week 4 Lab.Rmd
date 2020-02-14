@@ -137,7 +137,51 @@ In the formulas above, myMean, myStdDev, and n are all variables that could be c
 
 
 
-/********** pausing,2/10/20 *********/  
+Now with the data in this format, we should be able to create a visualization. Here are the charactaristics we want:
+
+* a point plotted for each group
+* Time on the x-axis
+* Average on the y-axis
+* Error bars for each point, showing the 95% confidence interval
+* A line through each point
+
+To see a rough example, click on the "sample.png" file in the Files window.
+
+The best way to approach this is to try a little bit at a time, test the output, add a little more, and test again, etc.
+
+To start, try just generating a plot with points. You'll want to use ggplot, with this general format:
+
+****** How much prompting should they have? *******
+ggplot(data=fullData, mapping=aes(x=time, y=avg))+geom_point()
+
+
+```{r}
+
+# Generate a point plot of your data below, with time on the x-axis, and average on the y-axis, using geom_point()
+
+
+
+
+```
+
+
+Now add the error bars, using geom_error(). Your ymin and ymax values should be your calculated lower and upper 95% confidence interval values, respectively.
+
+```{r}
+
+# Generate your plot with geom_point(), and add error bars using geom_errorbar() 
+
+
+
+
+
+```
+
+
+next - adjust x/y axes
+
+
+next - add line
 
 
 
@@ -204,6 +248,8 @@ fd
 
 ggplot(data=fullData, mapping=aes(x=time, y=avg))+ geom_path(mapping=aes(x=time, y=avg))+geom_point()+ylim(0,10)+xlim(0,90)+geom_errorbar(mapping=aes(ymin=lower_ci, ymax=upper_ci), width=5)
 
+
+ggplot(data=fullData, mapping=aes(x=time, y=avg))+geom_point()
 
 ## need to extend line to 0,0, clean up, etc.
 

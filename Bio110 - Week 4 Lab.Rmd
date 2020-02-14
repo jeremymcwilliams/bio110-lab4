@@ -121,9 +121,13 @@ lowerCI<-myMean-((qnorm(0.975)*myStdDev)/sqrt(n))
 In the formulas above, myMean, myStdDev, and n are all variables that could be calculated in the "summarise" function used earlier. In the code block below, try updating your group_by/summarise code from earlier to add lowerCI and upperCI:
 
 
+
+
 ```{r}
 
 # create a new data frame variable, adding columns for mean, standard deviation, number of measurements, upperCI, and lowerCI
+
+#myStats<-myData %>% group_by(time) %>% summarise (Average=mean(length), StandardDeviation=sd(length), n=n(), lowerCI<-myMean-((qnorm(0.975)*myStdDev)/sqrt(n)), upperCI<-myMean+((qnorm(0.975)*myStdDev)/sqrt(n)))
 
 
 # print the variable to check your success
@@ -151,13 +155,16 @@ The best way to approach this is to try a little bit at a time, test the output,
 
 To start, try just generating a plot with points. You'll want to use ggplot, with this general format:
 
-****** How much prompting should they have? *******
-ggplot(data=fullData, mapping=aes(x=time, y=avg))+geom_point()
+
+ggplot(data=myStats, mapping=aes(x=time, y=avg))+geom_point()
+
+...where myStats is your new data set (after running the groub_by/summarise code), time is your column header for the time group, and avg is the column header for the mean.
 
 
 ```{r}
 
 # Generate a point plot of your data below, with time on the x-axis, and average on the y-axis, using geom_point()
+# ggplot(data=myStats, mapping=aes(x=time, y=avg))+geom_point()
 
 
 
@@ -165,11 +172,12 @@ ggplot(data=fullData, mapping=aes(x=time, y=avg))+geom_point()
 ```
 
 
-Now add the error bars, using geom_error(). Your ymin and ymax values should be your calculated lower and upper 95% confidence interval values, respectively.
+Now add the error bars, using geom_error(). Your ymin and ymax values should be your calculated lower and upper 95% confidence interval values, respectively:
 
 ```{r}
 
 # Generate your plot with geom_point(), and add error bars using geom_errorbar() 
+# ggplot(data=myStats, mapping=aes(x=time, y=avg))+geom_point()++geom_errorbar(mapping=aes(ymin=lowerCI, ymax=upperCI), width=5)
 
 
 
@@ -178,231 +186,46 @@ Now add the error bars, using geom_error(). Your ymin and ymax values should be 
 ```
 
 
-next - adjust x/y axes
-
-
-next - add line
-
-
-
-
-/********TESTING!!***************/
+Now let's add the line connecting the dots using geom_path(). We can do this by appending  +geom_path(mapping=aes(x=time, y=avg)), making sure "time" and "avg" match your column headings. 
 
 ```{r}
 
-data<-read_csv("chlamydataforR.csv")
-data
-
-
-myStats<-data %>% group_by(time) %>% dplyr::summarise (avg=mean(length), sd=sd(length))
-
-myStats
-
-
-
-compute_lower_ci <- function(mean, sd, n, conf_level = 0.95){
-  error <- qnorm(0.975)*sd/sqrt(n)
-  lower_ci<-mean - error
-}
-
-
-compute_upper_ci <- function(mean, sd, n, conf_level = 0.95){
-  error <- qnorm(0.975)*sd/sqrt(n)
-  upper_ci<-mean+error
-}
-
-
-#### NOTE!! If using the Rmisc library, may need to specify the dplyr library when calling summarise
-## e.g. dplyr::summarise(....)
-
-
-fullData<-group_by(.data=data, time) %>% dplyr::summarize(avg=mean(length), stdDev=sd(length), n=n(), stdEr=sd(length)/sqrt(n())) %>% mutate(se = stdDev / sqrt(n),
-         lower_ci = compute_lower_ci(avg, stdDev, n),
-         upper_ci = compute_upper_ci(avg, stdDev, n))
-
-fd<-data %>% group_by(time) %>% dplyr::summarize(
-  avg=mean(length), 
-  stdDev=sd(length), 
-  n=n(), 
-  upper_ci = avg+((qnorm(0.975)*stdDev)/sqrt(n)), 
-  lower_ci = avg-((qnorm(0.975)*stdDev)/sqrt(n))
-  )
-
-
-fullData
-
-fd
-
+# Add the line to the graph:
+# ggplot(data=myStats, mapping=aes(x=time, y=avg))+geom_point()++geom_errorbar(mapping=aes(ymin=lowerCI, ymax=upperCI), width=5)+geom_path(mapping=aes(x=time, y=avg))
 
 
 ```
 
 
-
-
-
-## plotting
+Now we can clean up the plot by adjusting our x- and y- axes with the xlim() and ylim() functions. Each function takes a minimum and maximum (e.g. +ylim(0, 100))
 
 ```{r}
 
+# Adjust your axes with the xlim and ylim functions. Edit the values those functions below to improve your plot.
 
-ggplot(data=fullData, mapping=aes(x=time, y=avg))+ geom_path(mapping=aes(x=time, y=avg))+geom_point()+ylim(0,10)+xlim(0,90)+geom_errorbar(mapping=aes(ymin=lower_ci, ymax=upper_ci), width=5)
+# ggplot(data=myStats, mapping=aes(x=time, y=avg))+geom_point()++geom_errorbar(mapping=aes(ymin=lowerCI, ymax=upperCI), width=5)+geom_path(mapping=aes(x=time, y=avg))+xlim(0,100)+ylim(0,100)
 
 
-ggplot(data=fullData, mapping=aes(x=time, y=avg))+geom_point()
 
-## need to extend line to 0,0, clean up, etc.
 
 
 ```
 
 
-
-
-
-
-
-
-Testing with summarySE to make sure the values match
-
-
+Finally, add some labels using the labs() function:
 
 ```{r}
 
+# Update the values in the labs() function below (and others as appropriate)
 
-library(Rmisc)
-
-
-
-twentyFive<-read_csv("25.csv")
-
-
-myStats<-summarySE(data=twentyFive, measurevar="length", conf.interval = 0.95)
-
-myStats%>% mutate(lowerci=length-ci, upperci=length+ci) 
-
-
-qnorm(0.975)
+#ggplot(data=myStats, mapping=aes(x=time, y=avg))+geom_point()++geom_errorbar(mapping=aes(ymin=lowerCI, ymax=upperCI), width=5)+geom_path(mapping=aes(x=time, y=avg))+xlim(0,100)+ylim(0,100)+labs(title="my title", x="my x label", y="my y axis label")
 
 
 ```
 
 
-
-
-
-## Generating statistics for plots
-
-Our goal is to generate a plot showing the mean of our data as a point, with error bars displaying a 95% confidence interval. A 95% confidence interval defines a range of values that you can be 95% certain contains the population mean. 
-
-There's a function in R called "summarySE" that can generate the data we need for this plot. Here's the basic structure:
-
-myStats<-summarySE(data=myData, measurevar="MyColumnName", conf.interval = 0.95)
-
-where myData is your data frame, "MyColumnName" is the name of the column to measure, and conf.interval is the percent confidence interval you want to compute. 
-
-Adapt the summarySE command to your data, and run and print it below:
-
-```{r}
-# assign a variable to the summarySE function as described above:
-
-
-# print the variable:
-
-```
-
-
-
-This function generates a new data frame with the calculated statistics mean (the column name will match "MyColumnName"), standard deviation (sd), standard error (se), and confidence interval (ci). In order to get and use this data, you'll need to create new variables. You can do this by using the "$" operator, which lets you specify a specific column within a dataframe. For example, if your data frame is named myStats, and you want to get the "ci" data, your variable would look like this:
-
-myCI<-myStats$ci
-
-Below, create variables for the mean, ci, and the upper and lower limits of the confidence interval (hint: the upper limit is the mean+ci, lower is mean-ci)
-
-
-```{r}
-# create variable for the mean
-
-# create variable for the ci value
-
-# create variable for ci upper limit
-
-# create variable for ci lower limit
-
-
-```
-
-## Plots with ggplot
-
-Now we have the data needed to create a plot. Beginning with this lab, we're going to be using "ggplot", which is a very popular library for creating data visualizations in R. We're likely going to use ggplot for the remainder of the labs this semester.
-
-The "gg" translates to "grammar of graphics", and is founded in the idea that all data visualizations are comprised of three components:
-
-* data set
-* aesthetics, or visual marks that represent the data (i.e. the stuff that you see)
-* geometric objects, or "geoms" (e.g the type of plot)
-
-Let's first look at the basic structure of ggplot code:
-
-ggplot(data=myData, mapping=aes(x=someValue, y=anotherValue))+geom_point()
-
-In the code above, the three components are represented as such:
-
-* data set is "myData", typically a variable representing a data frame
-* aesthetics (mapping=aes(...)) refers to the points or data that appear. The values in the aes portion can vary depending upon the type of plot you create (refer to the ggplot2-cheatsheet.pdf in the files section for more info). x and y could be a single point or variable, refer to a column of data, or could be text.
-* the geom, or type of plot, is represented by "geom_point()". Each type of plot has a different function (e.g. geom_bar(), geom_line(), etc.).
-
-Notice that "geom_point()" is proceeded with a "+". The "+" is part of the ggplot syntax, and is a way to "chain" functions together. We'll do more of this soon to add more components to the plot. 
-
-Start off by creating a plot using the code sample above. Make sure you use your variable for the data frame in the "data=" portion, use your mean variable for the y-value, and set the x-value equal to some descriptive text (since it's text, make sure you use quotes).
-
-```{r}
-
-# ggplot code here:
-
-
-
-```
-
-You'll notice that the y-axis has an auto-generated range. Let's explicitly define our range by chaining the "ylim" function to the end of our plot. ylim takes an ordered pair, representing the minimum and maximim y-axis values (e.g. ylim(0,100)). Make sure you start with 0, and use a reasonable value for the max.
-
-```{r}
-# redo your plot, and chain "ylim" to the end
-
-
-```
-
-Now let's add the error bars representing the 95% confidence interval. It's the same code you just wrote, plus chaining the geom_errorbar() function. Since the error bar is "stuff that you see", you use the same "mapping=aes(...)" syntax as in the ggplot() function. In this case, it would look like:
-
-geom_errorbar(mapping=aes(ymin=minValue, ymax=maxValue))
-
-You can also adjust the width of your errorbar like this:
-
-geom_errorbar(mapping=aes(ymin=minValue, ymax=maxValue), width=0.5)
-
-Below, chain this function on to your plot code, and use your confidence interval min & max for the ymin and ymax values. Play around with different values for "width", until it seems ok to you:
-
-```{r}
-
-# plot code, adding the geom_errorbar() function
-
-
-```
-
-
-Finally, you can add custom labels by chaining the labs() function to your ggplot code. The syntax is:
-
-labs(title="my title", x="my x label", y="my y axis label")
-
-Chain this to your code, and run it below:
-
-```{r}
-
-# final plot, chaining the labs() function:
-
-
-```
 
 
 
 Make sure you copy and save your plot and print it with a detailed caption to turn in to your instructor.
+

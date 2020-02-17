@@ -27,7 +27,7 @@ Once you have checked that your spreadsheet follows these basic rules, save it a
 
 First you must upload your .csv file to R Studio in the bottom right window using the Upload button.  Browse to locate your file and click Upload.  Make sure it's loaded into the bio110-week4 folder.
 
-Before writing any R code, we'll need to load some R packages in order to use some of the specific functions we want.  Run the code chunk below to make sure these functions are available to your environement:
+Before writing any R code, we'll need to load some R packages in order to use some of the specific functions we want.  Run the code chunk below to make sure these functions are available to your environment:
 
 ```{r}
 
@@ -48,7 +48,7 @@ Load your data file to a variable called myData using the read_csv() function, a
 # for example,copy and paste the following command below, using your .csv file name in "":
 # myData<-read_csv("myData.csv")
 
-myData<-read_csv("chlamydataforR.csv")
+
 
 # confirm by printing your variable
 
@@ -82,11 +82,11 @@ time, Average, StandardDeviation, n
 
 This new data frame structured this way is the precursor for creating the plot that we want that shows the differences in groups.
 
-Go ahead and try the group_by/summarise technique with your data, by copying and pasting the code in line 64 to line 89, then run the code block.
+Go ahead and try the group_by/summarise technique with your data, by copying and pasting the code in line 64 to line 89, then run the code block. You may need to edit the code if your column titles do not exactly match, time and length.
 
 ```{r}
 # create a new data frame variable, adding columns for mean, standard deviation, and number of measurements 
-myStats<-myData %>% group_by(time) %>% summarise (Average=mean(length), StandardDeviation=sd(length), n=n())
+
 
 # print the variable to check your success
 myStats
@@ -100,7 +100,7 @@ upperCI<-Average+((qnorm(0.975)*StandardDeviation)/sqrt(n))
 
 lowerCI<-Average-((qnorm(0.975)*StandardDeviation)/sqrt(n))
 
-In the formulas above, myMean, myStdDev, and n are all variables that could be calculated in the "summarise" function used earlier. In the code block below, try updating your group_by/summarise code from earlier to add lowerCI and upperCI:
+In the formulas above, Average, StandardDeviation, and n are all variables that could be calculated in the "summarise" function used earlier. In the code block below, try updating your group_by/summarise code from earlier to add lowerCI and upperCI:
 
 
 
@@ -110,7 +110,7 @@ In the formulas above, myMean, myStdDev, and n are all variables that could be c
 # create a new data frame variable, adding columns for mean, standard deviation, number of measurements, upperCI, and lowerCI
 
 #myStats<-myData %>% group_by(time) %>% summarise (Average=mean(length), StandardDeviation=sd(length), n=n(), lowerCI<-Average-((qnorm(0.975)*StandardDeviation)/sqrt(n)), upperCI<-Average+((qnorm(0.975)*StandardDeviation)/sqrt(n)))
-myStats<-myData %>% group_by(time) %>% summarise (Average=mean(length), StandardDeviation=sd(length), n=n(), lowerCI<-Average-((qnorm(0.975)*StandardDeviation)/sqrt(n)), upperCI<-Average+((qnorm(0.975)*StandardDeviation)/sqrt(n)))
+
 
 # print the variable to check your success
 
@@ -123,7 +123,7 @@ myStats
 
 
 
-Now with the data in this format, we should be able to create a visualization. Here are the charactaristics we want:
+Now with the data in this format, we should be able to create a visualization. Here are the characteristics we want:
 
 * a point plotted for each group
 * Time on the x-axis
@@ -131,7 +131,6 @@ Now with the data in this format, we should be able to create a visualization. H
 * Error bars for each point, showing the 95% confidence interval
 * A line through each point
 
-To see a rough example, click on the "sample.png" file in the Files window.
 
 The best way to approach this is to try a little bit at a time, test the output, add a little more, and test again, etc.
 
@@ -148,7 +147,7 @@ ggplot(data=myStats, mapping=aes(x=time, y=Average))+geom_point()
 # Generate a point plot of your data below, with time on the x-axis, and average on the y-axis, using geom_point()
 # ggplot(data=myStats, mapping=aes(x=time, y=Average))+geom_point()
 
-ggplot(data=myStats, mapping=aes(x=time, y=Average))+geom_point()
+
 
 
 ```
@@ -162,7 +161,7 @@ Now add the error bars, using geom_error(). Your ymin and ymax values should be 
 # ggplot(data=myStats, mapping=aes(x=time,y=Average))+geom_point()++geom_errorbar(mapping=aes(ymin=lowerCI, ymax=upperCI), width=5)
 
 
-ggplot(data=myStats, mapping=aes(x=time,y=Average))+geom_point()+geom_errorbar(mapping=aes(ymin=lowerCI, ymax=upperCI), width=5)
+
 
 
 
@@ -175,7 +174,7 @@ Now let's add the line connecting the dots using geom_path(). We can do this by 
 
 # Add the line to the graph:
 # ggplot(data=myStats, mapping=aes(x=time,y=Average))+geom_point()++geom_errorbar(mapping=aes(ymin=lowerCI, ymax=upperCI), width=5)+geom_path(mapping=aes(x=time, y=Average))
-ggplot(data=myStats, mapping=aes(x=time,y=Average))+geom_point()+geom_errorbar(mapping=aes(ymin=lowerCI, ymax=upperCI), width=5)+geom_path(mapping=aes(x=time, y=Average))
+
 
 
 ```
@@ -189,7 +188,7 @@ Now we can clean up the plot by adjusting our x- and y- axes with the xlim() and
 
 # ggplot(data=myStats, mapping=aes(x=time,y=Average))+geom_point()+geom_errorbar(mapping=aes(ymin=lowerCI, ymax=upperCI), width=5)+geom_path(mapping=aes(x=time,y=Average))+xlim(0,100)+ylim(0,10)
 
-ggplot(data=myStats, mapping=aes(x=time,y=Average))+geom_point()+geom_errorbar(mapping=aes(ymin=lowerCI, ymax=upperCI),width=5)+geom_path(mapping=aes(x=time,y=Average))+xlim(0,90)+ylim(0,8)
+
 
 
 
@@ -203,7 +202,7 @@ Finally, add some labels using the labs() function:
 # Update the values in the labs() function below (and others as appropriate)
 
 #cut and paste your previous code and add: +labs(x="my x label", y="my y axis label") filling in the appropriate labels for your axes
-ggplot(data=myStats, mapping=aes(x=time,y=Average))+geom_point()+geom_errorbar(mapping=aes(ymin=lowerCI, ymax=upperCI),width=5)+geom_path(mapping=aes(x=time,y=Average))+xlim(0,90)+ylim(0,8)+labs(x="time in minutes", y="flagella length in micrometers")
+
 
 ```
 

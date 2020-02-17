@@ -109,7 +109,7 @@ In the formulas above, Average, StandardDeviation, and n are all variables that 
 
 # create a new data frame variable, adding columns for mean, standard deviation, number of measurements, upperCI, and lowerCI
 
-#myStats<-myData %>% group_by(time) %>% summarise (Average=mean(length), StandardDeviation=sd(length), n=n(), lowerCI<-Average-((qnorm(0.975)*StandardDeviation)/sqrt(n)), upperCI<-Average+((qnorm(0.975)*StandardDeviation)/sqrt(n)))
+#myStats<-myData %>% group_by(time) %>% summarise (Average=mean(length), StandardDeviation=sd(length), n=n(), lowerCI=Average-((qnorm(0.975)*StandardDeviation)/sqrt(n)), upperCI=Average+((qnorm(0.975)*StandardDeviation)/sqrt(n)))
 
 
 # print the variable to check your success
@@ -158,7 +158,7 @@ Now add the error bars, using geom_error(). Your ymin and ymax values should be 
 ```{r}
 
 # Generate your plot with geom_point(), and add error bars using geom_errorbar() 
-# ggplot(data=myStats, mapping=aes(x=time,y=Average))+geom_point()++geom_errorbar(mapping=aes(ymin=lowerCI, ymax=upperCI), width=5)
+# ggplot(data=myStats, mapping=aes(x=time,y=Average))+geom_point()+geom_errorbar(mapping=aes(ymin=lowerCI, ymax=upperCI), width=5)
 
 
 
@@ -173,7 +173,7 @@ Now let's add the line connecting the dots using geom_path(). We can do this by 
 ```{r}
 
 # Add the line to the graph:
-# ggplot(data=myStats, mapping=aes(x=time,y=Average))+geom_point()++geom_errorbar(mapping=aes(ymin=lowerCI, ymax=upperCI), width=5)+geom_path(mapping=aes(x=time, y=Average))
+# ggplot(data=myStats, mapping=aes(x=time,y=Average))+geom_point()+geom_errorbar(mapping=aes(ymin=lowerCI, ymax=upperCI), width=5)+geom_path(mapping=aes(x=time, y=Average))
 
 
 
